@@ -51,6 +51,38 @@ funcTest = Function[{TargetEq, pOrder, ParamForSolve},
 	 RetVal
 ];
 
+funcBuildSys = Function[{TargetEq, pOrder},
+
+	pOrder = pOrder;
+
+	PdeToolsLoopLimit = funcGetOdeOrder[TargetEq] + 2;
+
+	AllParamsList = funcGetAllParams[TargetEq];
+	AllParamsSet = AllParamsList;
+	FullParamsSet = Join[AllParamsList, {b}];
+	ACoeffList = funcGetACoeffList[pOrder];
+	ricSubList1 = funcGetRicSub[PdeToolsLoopLimit];
+	EqLists = funcGetEqList[ACoeffList, pOrder, TargetEq, ricSubList1];
+	EqList = EqLists[[1]];
+	EqList0 = EqLists[[2]];
+	subEx = EqLists[[3]];
+	RetVal = funcGetAexp[ACoeffList, pOrder, TargetEq, EqList0];
+	TMP0 = RetVal[[1]];
+	TMP1 = RetVal[[2]];
+	TMP2 = RetVal[[3]];
+	Es0 = RetVal[[4]];
+	Es1 = RetVal[[5]];
+	Ac0 = RetVal[[6]];
+	Ac1 = RetVal[[7]];
+	ParamEqSys = funcGetParamEqSys[TMP2, Es1, False];
+
+	RetVal = <|"TMP2"->TMP2, "ParamEqSys"->ParamEqSys,
+	 "subEx"->subEx, "EqList0"->EqList0, "AllParamsSet"->AllParamsSet, "pOrder"->pOrder,
+	 "TargetEq"->TargetEq, "FullParamsSet"->FullParamsSet |>;
+	 RetVal
+];
+
+
 (******************************************************************************)
 TargetEq = KdVBEq;
 pOrder = 2;
@@ -79,17 +111,18 @@ ParamForSolve = { beta, C0, b };
 TargetEq = kdv5Eq;
 pOrder = 2;
 ParamForSolve = { b, C0, gamma };
+TargetEq = genericEq3;
+pOrder = 3;
+ParamForSolve = { b, gamma, xi, delta  };
 TargetEq = ksEq;
 pOrder = 3;
 ParamForSolve = { sigma, b, C1 };
 TargetEq = genericEq2;
 pOrder = 2;
 ParamForSolve = { xi, b, omega, phi, epsilon, gamma, delta, alpha  };
-TargetEq = genericEq3;
-pOrder = 3;
-ParamForSolve = { b, gamma, xi, delta  };
 (******************************************************************************)
 
+(*
 
 pOrder = pOrder;
 
@@ -119,11 +152,11 @@ ParamValues = funcTrySolveForParam[ParamEqSys, ParamForSolve, False];
 
 RES = funcFormResult[pOrder, TMP2, ParamValues];
 
-
+*)
 
 (******************************************************************************)
 
-Function[{eq, params},
+ff = Function[{eq, params},
 	t0 = Factor[Expand[eq]][[1]];
 	t1 = Numerator[t0];
 	t2 = Depth[t1];
